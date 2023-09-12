@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function NavLink() {
   return (
-    <ul className="navbar-nav ms-auto align-items-center ">
+    <ul className="navbar-nav ms-auto align-items-center">
       <li className="nav-item">
         <Link
           className={`nav-link ${location.pathname == '/' ? 'active' : ''}`}
@@ -21,8 +21,8 @@ export default function NavLink() {
           Arsip
         </Link>
       </li>
-      <li className="nav-item ">
-        <Link to={'/addNote'} className="nav-link">
+      <li className="nav-item">
+        <Link to={'/notes/new'} className="nav-link">
           <button className="btn btn-primary">Buat catatan</button>
         </Link>
       </li>

@@ -1,8 +1,10 @@
+import PropTypes from 'prop-types';
+
 export default function Search({ handleSearch, query }) {
   return (
     <div className="container pt-5">
-      <div className="row ">
-        <div className="col-lg-5 mb-3 mx-auto ">
+      <div className="row">
+        <div className="col-lg-5 mb-3 mx-auto">
           <div className="mb-3">
             <input
               value={query || ''}
@@ -18,3 +20,8 @@ export default function Search({ handleSearch, query }) {
     </div>
   );
 }
+
+Search.propTypes = {
+  handleSearch: PropTypes.func.isRequired,
+  query: PropTypes.string.isRequired,
+};

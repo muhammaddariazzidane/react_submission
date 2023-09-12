@@ -5,7 +5,7 @@ export default function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg shadow py-3">
       <div className="container">
-        <Link className="navbar-brand fs-4 fw-semibold " to={'/'}>
+        <Link className="navbar-brand fs-4 fw-semibold" to={'/'}>
           My Notes
         </Link>
         <button

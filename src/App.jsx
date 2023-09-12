@@ -35,22 +35,25 @@ const App = () => {
     <Routes>
       <Route
         path={'/'}
-        element={<Home notes={notes} archiveNote={archiveNote} />}
+        element={<Home notes={notes} handleArchiveNote={archiveNote} />}
       />
       <Route
         path={'/detail/:id'}
         element={
           <Detail
             notes={notes}
-            archiveNote={archiveNote}
+            handleArchiveNote={archiveNote}
             deleteNote={deleteNote}
           />
         }
       />
-      <Route path={'/addNote'} element={<AddNote createNote={createNote} />} />
+      <Route
+        path={'/notes/new'}
+        element={<AddNote createNote={createNote} />}
+      />
       <Route
         path={'/arsip'}
-        element={<ArsipNote notes={notes} archiveNote={archiveNote} />}
+        element={<ArsipNote notes={notes} handleArchiveNote={archiveNote} />}
       />
       <Route path={'/*'} element={<NotFound />} />
     </Routes>
