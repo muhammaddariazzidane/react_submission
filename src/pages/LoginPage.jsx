@@ -3,17 +3,25 @@ import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../utils/api';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
+import AlertMessage from '../components/alert/AlertMessage';
+import LoginIput from '../components/input/LoginIput';
 
 export default function LoginPage({ loginSuccess }) {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [notif, setNotif] = useState(null);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { error, data } = await login({ email, password });
-
+    const { error, data, message } = await login({ email, password });
+    if (message) {
+      setTimeout(() => {
+        setNotif(null);
+      }, 3000);
+      setNotif({ message });
+    }
     if (!error) {
       loginSuccess(data);
       navigate('/');
@@ -24,35 +32,19 @@ export default function LoginPage({ loginSuccess }) {
     <div className="container py-5">
       <div className="row px-3">
         <h1 className="text-center py-3 fs-2">Login</h1>
+        {notif && <AlertMessage message={notif.message} type={notif.type} />}
+
         <form
           onSubmit={handleLogin}
           className="col-lg-5 mx-auto p-4 shadow rounded-3"
         >
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
-            <input
-              onChange={(e) => setEmail(e.target.value)}
-              value={email}
-              type="email"
-              className="form-control"
-              id="email"
-              aria-describedby="emailHelp"
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              type="password"
-              className="form-control"
-              id="password"
-            />
-          </div>
+          <LoginIput
+            handleEmail={(e) => setEmail(e.target.value)}
+            email={email}
+            handlePassword={(e) => setPassword(e.target.value)}
+            password={password}
+          />
+
           <div className="my-3 d-flex justify-content-between align-items-center ">
             <div className="fst-italic ">
               Don't have an account?

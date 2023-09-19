@@ -1,5 +1,6 @@
 import { LocaleConsumer } from '../contexts/LocaleContext';
 import PropTypes from 'prop-types';
+import SearchInput from './input/SearchInput';
 
 export default function SearchBar({ keyword, handleSearch }) {
   return (
@@ -11,13 +12,11 @@ export default function SearchBar({ keyword, handleSearch }) {
               <h1 className="fs-5 text-center mb-3">
                 {locale === 'en' ? 'Search Notes' : 'Cari Catatan'}
               </h1>
-              <input
-                value={keyword}
-                onChange={handleSearch}
-                type="search"
-                className="form-control"
-                id="search"
-                placeholder={locale === 'en' ? 'Search...' : 'Cari...'}
+
+              <SearchInput
+                keyword={keyword}
+                handleSearch={handleSearch}
+                locale={locale}
               />
             </div>
           </div>

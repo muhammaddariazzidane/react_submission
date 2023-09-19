@@ -1,6 +1,6 @@
-import { Route, Routes } from 'react-router-dom';
 import { getUserLogged, putAccessToken } from '../utils/api';
-import React from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import HomePage from '../pages/HomePage';
 import AddPage from '../pages/AddPage';
 import RegisterPage from '../pages/RegisterPage';
@@ -9,84 +9,70 @@ import DetailPage from '../pages/DetailPage';
 import ArchivedPage from '../pages/ArchivedPage';
 import NotFound from '../pages/errors/NotFound';
 
-class NotesApp extends React.Component {
-  constructor(props) {
-    super(props);
+export default function NotesApp() {
+  const [authedUser, setAuthedUser] = useState(null);
+  const [initializing, setInitializing] = useState(true);
+  const navigate = useNavigate();
 
-    this.state = {
-      authedUser: null,
-      initializing: true,
-    };
-
-    this.onLoginSuccess = this.onLoginSuccess.bind(this);
-    this.onLogout = this.onLogout.bind(this);
-  }
-
-  async componentDidMount() {
-    const { data } = await getUserLogged();
-
-    this.setState(() => {
-      return {
-        authedUser: data,
-        initializing: false,
-      };
-    });
-  }
-
-  async onLoginSuccess({ accessToken }) {
-    putAccessToken(accessToken);
-    const { data } = await getUserLogged();
-
-    this.setState(() => {
-      return {
-        authedUser: data,
-      };
-    });
-  }
-
-  onLogout() {
-    this.setState(() => {
-      return {
-        authedUser: null,
-      };
-    });
-
-    putAccessToken('');
-  }
-
-  render() {
-    if (this.state.initializing) {
-      return null;
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const { data } = await getUserLogged();
+        setAuthedUser(data);
+      } catch (error) {
+        setAuthedUser(null);
+      } finally {
+        setInitializing(false);
+      }
     }
+    fetchUser();
+  }, []);
 
-    if (this.state.authedUser === null) {
-      return (
-        <Routes>
+  const onLoginSuccess = async ({ accessToken }) => {
+    putAccessToken(accessToken);
+    try {
+      const { data } = await getUserLogged();
+      setAuthedUser(data);
+    } catch (error) {
+      setAuthedUser(null);
+    }
+  };
+
+  const onLogout = () => {
+    setAuthedUser(null);
+    putAccessToken('');
+    navigate('/');
+  };
+
+  if (initializing) {
+    return null;
+  }
+
+  return (
+    <Routes>
+      {authedUser === null ? (
+        <>
           <Route
             path={'/*'}
-            element={<LoginPage loginSuccess={this.onLoginSuccess} />}
+            element={<LoginPage loginSuccess={onLoginSuccess} />}
           />
           <Route path={'/register'} element={<RegisterPage />} />
-        </Routes>
-      );
-    }
-
-    return (
-      <Routes>
-        <Route path={'/'} element={<HomePage logout={this.onLogout} />} />
-        <Route path={'/add'} element={<AddPage logout={this.onLogout} />} />
-        <Route
-          path={'/archived'}
-          element={<ArchivedPage logout={this.onLogout} />}
-        />
-        <Route
-          path={'/detail/:id'}
-          element={<DetailPage logout={this.onLogout} />}
-        />
-        <Route path={'/*'} element={<NotFound />} />
-      </Routes>
-    );
-  }
+        </>
+      ) : (
+        <>
+          <Route path={'/'} element={<HomePage logout={onLogout} />} />
+          <Route path={'/add'} element={<AddPage logout={onLogout} />} />
+          <Route
+            path={'/archived'}
+            element={<ArchivedPage logout={onLogout} />}
+          />
+          <Route
+            path={'/detail/:id'}
+            element={<DetailPage logout={onLogout} />}
+          />
+          <Route path={'/*'} element={<NotFound />} />
+        </>
+      )}
+    </Routes>
+  );
 }
-
-export default NotesApp;

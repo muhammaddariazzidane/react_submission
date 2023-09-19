@@ -19,6 +19,25 @@ async function fetchWithToken(url, options = {}) {
 }
 
 async function login({ email, password }) {
+  const error =
+    !email && !password
+      ? 'Email and password are required'
+      : !email
+      ? 'Email is required'
+      : !password
+      ? 'Password is required'
+      : password.length < 6
+      ? 'Password must be at least 6 characters'
+      : null;
+
+  if (error) {
+    return {
+      error: !!error,
+      data: null,
+      message: error,
+    };
+  }
+
   const response = await fetch(`${BASE_URL}/login`, {
     method: 'POST',
     headers: {
@@ -30,14 +49,33 @@ async function login({ email, password }) {
   const responseJson = await response.json();
 
   if (responseJson.status !== 'success') {
-    alert(responseJson.message);
-    return { error: true, data: null };
+    return { error: true, data: null, message: responseJson.message };
   }
 
   return { error: false, data: responseJson.data };
 }
 
 async function register({ name, email, password }) {
+  const error =
+    !name && !email && !password
+      ? 'Name, email and password are required'
+      : !name
+      ? 'Name is required'
+      : !email
+      ? 'Email is required'
+      : !password
+      ? 'Password is required'
+      : password.length < 6
+      ? 'Password must be at least 6 characters'
+      : null;
+
+  if (error) {
+    return {
+      error: !!error,
+      data: null,
+      message: error,
+    };
+  }
   const response = await fetch(`${BASE_URL}/register`, {
     method: 'POST',
     headers: {
@@ -49,11 +87,10 @@ async function register({ name, email, password }) {
   const responseJson = await response.json();
 
   if (responseJson.status !== 'success') {
-    alert(responseJson.message);
-    return { error: true };
+    return { error: true, message: responseJson.message };
   }
 
-  return { error: false };
+  return { error: false, message: 'Registrasi berhasil!, silahkan login' };
 }
 
 async function getUserLogged() {
@@ -99,7 +136,11 @@ async function addNote({ title, body }) {
     return { error: true, data: null };
   }
 
-  return { error: false, data: responseJson.data };
+  return {
+    error: false,
+    data: responseJson.data,
+    message: 'Berhasil menambah catatan',
+  };
 }
 
 async function getActiveNotes() {
